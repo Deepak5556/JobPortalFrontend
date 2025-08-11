@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { NavLink } from "react-router-dom";
 
 const NavBar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -6,6 +7,21 @@ const NavBar = () => {
   const handleMobileMenu = () => {
     setMobileMenuOpen((prev) => !prev);
   };
+
+  const navLinks = [
+    { label: "Dashboard", path: "/dashboard" },
+    { label: "Jobs", path: "/jobs" },
+    { label: "My Application", path: "/applications" },
+    { label: "Saved", path: "/saved" },
+    { label: "Profile", path: "/profile" },
+  ];
+
+  // New: No underline, no hover
+  // Active: bold, light-blue pill
+  const activeClass =
+    "bg-blue-300 text-blue-900 rounded-full px-4 py-1 font-bold text-base shadow";
+  const defaultClass =
+    "text-white font-medium cursor-pointer text-base transition-all duration-200";
 
   return (
     <nav className="bg-blue-700 shadow">
@@ -20,21 +36,18 @@ const NavBar = () => {
           {/* Desktop Navigation Links */}
           <div className="hidden md:flex">
             <ul className="flex space-x-8">
-              <li className="text-white hover:text-blue-200 font-medium cursor-pointer transition-colors duration-150">
-                Dashboard
-              </li>
-              <li className="text-white hover:text-blue-200 font-medium cursor-pointer transition-colors duration-150">
-                Jobs
-              </li>
-              <li className="text-white hover:text-blue-200 font-medium cursor-pointer transition-colors duration-150">
-                My Application
-              </li>
-              <li className="text-white hover:text-blue-200 font-medium cursor-pointer transition-colors duration-150">
-                Saved
-              </li>
-              <li className="text-white hover:text-blue-200 font-medium cursor-pointer transition-colors duration-150">
-                Profile
-              </li>
+              {navLinks.map((link) => (
+                <li key={link.label}>
+                  <NavLink
+                    to={link.path}
+                    className={({ isActive }) =>
+                      isActive ? `${defaultClass} ${activeClass}` : defaultClass
+                    }
+                  >
+                    {link.label}
+                  </NavLink>
+                </li>
+              ))}
             </ul>
           </div>
           {/* Mobile menu button */}
@@ -43,7 +56,7 @@ const NavBar = () => {
               onClick={handleMobileMenu}
               type="button"
               aria-label="Toggle mobile menu"
-              className="inline-flex items-center justify-center p-2 rounded-md text-white hover:bg-blue-800 focus:outline-none transition"
+              className="inline-flex items-center justify-center p-2 rounded-md text-white focus:outline-none transition"
             >
               <svg
                 className="block h-6 w-6"
@@ -53,7 +66,6 @@ const NavBar = () => {
                 xmlns="http://www.w3.org/2000/svg"
               >
                 {mobileMenuOpen ? (
-                  // Close menu icon
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -61,7 +73,6 @@ const NavBar = () => {
                     d="M6 18L18 6M6 6l12 12"
                   />
                 ) : (
-                  // Hamburger icon
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -78,21 +89,21 @@ const NavBar = () => {
       {mobileMenuOpen && (
         <div className="md:hidden bg-blue-700">
           <ul className="px-2 pt-2 pb-3 space-y-1">
-            <li className="block text-white hover:text-blue-200 font-medium py-2 px-4 cursor-pointer transition-colors duration-150">
-              Dashboard
-            </li>
-            <li className="block text-white hover:text-blue-200 font-medium py-2 px-4 cursor-pointer transition-colors duration-150">
-             Jobs
-            </li>
-            <li className="block text-white hover:text-blue-200 font-medium py-2 px-4 cursor-pointer transition-colors duration-150">
-              My Application
-            </li>
-            <li className="block text-white hover:text-blue-200 font-medium py-2 px-4 cursor-pointer transition-colors duration-150">
-              Saved
-            </li>
-            <li className="block text-white hover:text-blue-200 font-medium py-2 px-4 cursor-pointer transition-colors duration-150">
-              Profile
-            </li>
+            {navLinks.map((link) => (
+              <li key={link.label}>
+                <NavLink
+                  to={link.path}
+                  className={({ isActive }) =>
+                    isActive
+                      ? `${defaultClass} ${activeClass} block text-center`
+                      : `${defaultClass} block text-center`
+                  }
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {link.label}
+                </NavLink>
+              </li>
+            ))}
           </ul>
         </div>
       )}

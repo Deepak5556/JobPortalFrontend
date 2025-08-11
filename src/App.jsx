@@ -5,6 +5,7 @@ import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import AllJobs from "./pages/AllJobs";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import MyApplications from "./pages/MyApplications";
 
 const NotFound = () => (
   <div className="flex items-center justify-center h-screen">
@@ -24,6 +25,8 @@ const App = () => {
         <Route path="/signup" element={<Signup />} />  {/* Updated for clarity */}
         <Route path="/dashboard/*" element={<Dashboard />} />
         <Route path="/jobs" element={<AllJobs />} />
+        <Route path="/applications" element={<MyApplications />} />
+        
         {/* <Route path="*" element={<NotFound />} /> */}
       </Routes>
     </Router>

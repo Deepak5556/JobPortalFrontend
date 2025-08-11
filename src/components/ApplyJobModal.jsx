@@ -1,26 +1,11 @@
-    import React, { useState } from "react";
+import React, { useState } from "react";
+import Swal from "sweetalert2";
 
-// Props:
-// - open: boolean, controls visibility
-// - onClose: function to close modal
-// - job: job object user is applying to
-// - jobSeekerProfile: job seeker profile object (from backend/api or props)
-// - onSubmit: async function to handle actual apply (formData) for integration
-const ApplyJobModal = ({
-  open,
-  onClose,
-  job,
-  jobSeekerProfile,
-  onSubmit
-}) => {
+const ApplyJobModal = ({ open, onClose, job, jobSeekerProfile, onSubmit }) => {
   const [coverLetter, setCoverLetter] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
 
   if (!open || !job) return null;
-
-  // Example Application object for API:
-  // { jobListingId: job.jobListingId, jobSeekerProfileId: jobSeekerProfile.JobSeekerProfileId, coverLetter, status: "Pending" }
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
@@ -29,15 +14,26 @@ const ApplyJobModal = ({
       jobListingId: job.jobListingId,
       jobSeekerProfileId: jobSeekerProfile.JobSeekerProfileId,
       coverLetter,
-      status: "Pending"
+      status: "Pending",
     });
     setSubmitting(false);
-    setSubmitted(true);
+
+    // Show SweetAlert and close modal after acknowledge
+    Swal.fire({
+      title: "Application Submitted!",
+      text: "Your application has been submitted successfully.",
+      icon: "success",
+      confirmButtonColor: "#2563eb", // Tailwind blue-600
+      confirmButtonText: "OK",
+      customClass: { popup: "rounded-xl" },
+    }).then(() => {
+      setCoverLetter("");
+      onClose();
+    });
   };
 
-  // Simple modal style, highly customizable:
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/10 backdrop-blur-sm">
       <div className="relative bg-white rounded-xl shadow-xl max-w-lg w-full p-8">
         <button
           onClick={onClose}
@@ -56,7 +52,10 @@ const ApplyJobModal = ({
           <span className="font-semibold">Company:</span> {job.company || "N/A"}
         </p>
         <p className="mb-4 text-sm text-blue-800">
-          JobSeeker Profile: <span className="font-semibold">{jobSeekerProfile?.UserId || "ID"}</span>
+          JobSeeker Profile:{" "}
+          <span className="font-semibold">
+            {jobSeekerProfile?.UserId || "ID"}
+          </span>
         </p>
         <form onSubmit={handleFormSubmit}>
           <label className="block mb-2 font-semibold text-sm text-blue-700">
@@ -65,30 +64,30 @@ const ApplyJobModal = ({
               className="w-full border rounded p-2 mt-1 focus:outline-blue-400"
               rows={5}
               value={coverLetter}
-              onChange={e => setCoverLetter(e.target.value)}
+              onChange={(e) => setCoverLetter(e.target.value)}
               required
-              disabled={submitting || submitted}
+              disabled={submitting}
             />
           </label>
           <div className="flex items-center mt-1 text-xs text-gray-500">
-            Attach resume: <a href={jobSeekerProfile?.ResumeUrl} target="_blank" rel="noopener noreferrer" className="ml-1 underline text-blue-600">
+            Attach resume:{" "}
+            <a
+              href={jobSeekerProfile?.ResumeUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="ml-1 underline text-blue-600"
+            >
               {jobSeekerProfile?.ResumeUrl ? "View Resume" : "Not Linked"}
             </a>
           </div>
-          {/* You may add a file upload input if you want to support upload */}
           <button
             type="submit"
-            disabled={submitting || submitted}
+            disabled={submitting}
             className="w-full mt-5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold py-2 transition"
           >
-            {submitting ? 'Submitting...' : submitted ? 'Application Submitted!' : 'Submit Application'}
+            {submitting ? "Submitting..." : "Submit Application"}
           </button>
         </form>
-        {submitted && (
-          <p className="mt-4 text-green-600 text-center font-bold">
-            Your application has been submitted!
-          </p>
-        )}
       </div>
     </div>
   );
