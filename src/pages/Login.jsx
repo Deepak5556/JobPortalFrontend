@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -8,49 +9,39 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
+  const handleSubmit = async (e) => {
+    e.preventDefault(); // Stop the form from refreshing the page
+    setError(""); // Clear any previous errors
 
-  // API call function
-  // const loginUser = async (email, password) => {
-  //   const response = await fetch("http://localhost:5252/api/Users/Login", {
-  //     method: "POST",
-  //     headers: { "Content-Type": "application/json" },
-  //     body: JSON.stringify({ email, password })
-  //   });
-
-  //   if (!response.ok) {
-  //     const errData = await response.json().catch(() => ({}));
-  //     throw new Error(errData.message || "Invalid credentials or server error");
-  //   }
-  //   console.log(response);
-
-  //   return response.json();
-  // };
-
-  // Form submit handler
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  setError("");
-  setLoading(true);
-  try {
-    const response = await fetch(
-      `http://localhost:5010/api/Login/Validation?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`,
-      { method: "GET" }
-    );
-
-    if (!response.ok) {
-      throw new Error("Login failed. Please check your credentials.");
+    // Basic validation
+    if (!email || !password) {
+      if (!email) alert("Email is required");
+      if (!password) alert("Password is required");
+      return;
     }
 
-    const data = await response.json();
-    // You can store token or user info here if needed
-    setLoading(false);
-    navigate("/"); // Redirect to home or dashboard after login
-  } catch (error) {
-    setError(error.message || "Login error");
-    setLoading(false);
-  }
-};
-
+    try {
+      setLoading(true);
+      const response = await axios.get(
+        "http://localhost:5252/api/Users/Login",
+        {
+          params: { email, password },
+        }
+      );
+      alert(response.data.message);
+      console.log("User Data:", response.data.user);
+      localStorage.setItem("user", JSON.stringify(response.data.user));
+      navigate("/dashboard");
+    } catch (err) {
+      if (err.response?.data?.message) {
+        setError(err.response.data.message);
+      } else {
+        setError("Something went wrong. Please try again.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
