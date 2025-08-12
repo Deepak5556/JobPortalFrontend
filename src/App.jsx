@@ -1,11 +1,14 @@
 import React from "react";
+import { useLocation, BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Navbar from "./components/NavBar";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import AllJobs from "./pages/AllJobs";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import MyApplications from "./pages/MyApplications";
+import Profile from "./pages/Profile";
+import SavedJobs from "./pages/Saved";
+import { ApplicationsProvider } from "../src/contexts/ApplicationsContext";
 
 const NotFound = () => (
   <div className="flex items-center justify-center h-screen">
@@ -13,24 +16,36 @@ const NotFound = () => (
   </div>
 );
 
-const App = () => {
+const AppRoutes = () => {
+  const location = useLocation();
+  // Only show Navbar if not login or signup
+  const hideNavbarPaths = ["/login", "/signup"];
+  const shouldShowNavbar = !hideNavbarPaths.includes(location.pathname);
+
   return (
-    <Router>
-      {/* Only show Navbar if not on login/signup */}
-      {/* You could use location.pathname or a layout route for more advanced visibility logic */}
-      <Navbar />
+    <>
+      {shouldShowNavbar && <Navbar />}
       <Routes>
-        <Route path="/" element={<Login />} />
+        <Route path="/" element={<Navigate to="/dashboard" />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />  {/* Updated for clarity */}
-        <Route path="/dashboard/*" element={<Dashboard />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/jobs" element={<AllJobs />} />
         <Route path="/applications" element={<MyApplications />} />
-        
-        {/* <Route path="*" element={<NotFound />} /> */}
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/saved" element={<SavedJobs />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
-    </Router>
+    </>
   );
 };
+
+const App = () => (
+  <ApplicationsProvider>
+    <Router>
+      <AppRoutes />
+    </Router>
+  </ApplicationsProvider>
+);
 
 export default App;

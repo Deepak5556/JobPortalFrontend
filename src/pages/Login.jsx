@@ -12,7 +12,9 @@ const Login = () => {
   // API call function
   const loginUser = async (email, password) => {
     const response = await fetch(
-      `http://localhost:5252/api/Users/Login/${encodeURIComponent(email)}/${encodeURIComponent(password)}`,
+      `http://localhost:5252/api/Users/Login/${encodeURIComponent(
+        email
+      )}/${encodeURIComponent(password)}`,
       { method: "GET" }
     );
     if (!response.ok) {
@@ -95,7 +97,7 @@ const Login = () => {
 
         <div className="mt-5 text-center">
           Don’t have an account?{" "}
-          <Link to="/signin" className="text-red-600">
+          <Link to="/signup" className="text-red-600">
             Register
           </Link>
         </div>
@@ -103,5 +105,4 @@ const Login = () => {
     </div>
   );
 };
-
 export default Login;
