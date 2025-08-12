@@ -34,7 +34,6 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 flex flex-col">
       {/* Fixed NavBar at the top */}
-     
 
       {/* Main grid layout */}
       <main className="flex-grow container max-w-7xl mx-auto px-4 py-10 grid grid-cols-1 md:grid-cols-4 gap-8">
@@ -48,8 +47,9 @@ const Dashboard = () => {
             />
             <div className="text-center">
               <h2 className="text-xl font-bold text-gray-800 mb-1">
-                Deepak Sharma
+                Deepakkumar
               </h2>
+
               <p className="text-sm text-blue-700 mb-4">
                 Frontend Developer | Job Seeker
               </p>
