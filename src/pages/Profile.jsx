@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom"; // NEW: useNavigate
 
 // Mock applications data
 const defaultApps = [
@@ -22,6 +22,8 @@ const defaultApps = [
 const Profile = () => {
   const profilePhotoRef = useRef();
   const resumeRef = useRef();
+  const navigate = useNavigate(); // NEW
+
   const [editName, setEditName] = useState(false);
   const [editPhone, setEditPhone] = useState(false);
   const [editLocation, setEditLocation] = useState(false);
@@ -39,16 +41,58 @@ const Profile = () => {
 
   const handlePhotoChange = (e) => {
     if (e.target.files[0]) {
+      // FIX: Use files instead of files
       setPhoto(URL.createObjectURL(e.target.files));
     }
   };
+
   const skillsList = skills
     .split(",")
     .map((s) => s.trim())
     .filter(Boolean);
 
+  // NEW: Logout handler
+  const handleLogout = () => {
+    const ok = window.confirm("Are you sure you want to log out?");
+    if (!ok) return;
+
+    try {
+      // Clear any auth tokens or user state here
+      // localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      sessionStorage.clear();
+      // Optionally call your API to invalidate the session
+
+      // Navigate to login page or landing page
+      navigate("/login"); // Adjust path to your routes
+    } catch (err) {
+      console.error("Logout failed:", err);
+      // As a fallback, force reload or redirect
+      window.location.href = "/login";
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 flex flex-col">
+      {/* NEW: Top bar with Logout */}
+      <header className="w-full bg-white/70 backdrop-blur border-b border-blue-100">
+        <div className="container max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+          <Link to="/" className="text-xl font-extrabold text-blue-900">
+            Job Portal
+          </Link>
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-semibold shadow focus:outline-none focus:ring-2 focus:ring-red-400"
+              aria-label="Logout"
+            >
+              Logout
+            </button>
+          </div>
+        </div>
+      </header>
+
       <main className="flex-grow container max-w-7xl mx-auto px-4 py-10 grid grid-cols-1 md:grid-cols-4 gap-8">
         {/* Sidebar (profile / shortcuts) */}
         <aside className="hidden md:block col-span-1 bg-white rounded-2xl shadow p-6 h-fit">

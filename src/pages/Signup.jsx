@@ -1,25 +1,36 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
-
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 const Signup = () => {
   const [form, setForm] = useState({
-    name: "",
+    username: "",
     email: "",
     password: "",
     confirmPassword: "",
+    phoneNumber: "",
     role: "",
   });
   const [error, setError] = useState("");
+
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
     setError("");
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Basic validation
-    if (!form.name || !form.email || !form.password || !form.confirmPassword || !form.role) {
+
+    // Validation
+    if (
+      !form.username ||
+      !form.email ||
+      !form.password ||
+      !form.confirmPassword ||
+      !form.phoneNumber ||
+      !form.role
+    ) {
       setError("Please fill in all fields.");
       return;
     }
@@ -27,10 +38,33 @@ const Signup = () => {
       setError("Passwords do not match.");
       return;
     }
-    // Add your sign up logic here
-    alert(
-      `Account created! (demo)\nName: ${form.name}\nEmail: ${form.email}\nRole: ${form.role}`
-    );
+
+    // Prepare API data (exclude confirmPassword)
+    const payload = {
+      username: form.username,
+      email: form.email,
+      password: form.password,
+      phoneNumber: form.phoneNumber,
+      role: form.role,
+    };
+    
+
+    try {
+      const response = await axios.post(
+        "http://localhost:5252/api/Users/Signup",
+        payload
+      );
+      alert(response.data.message || "Signup successful!");
+      navigate("/dashboard");
+    } catch (err) {
+      if (err.response) {
+        setError(
+          err.response.data.message || "Signup failed. Please try again."
+        );
+      } else {
+        setError("Something went wrong. Please try again.");
+      }
+    }
   };
 
   return (
@@ -39,89 +73,100 @@ const Signup = () => {
         <h1 className="text-2xl font-bold mb-1 text-gray-800">Sign Up</h1>
         <p className="text-sm text-gray-500 mb-6">Create a new account</p>
         {error && <div className="mb-4 text-red-500 text-sm">{error}</div>}
+
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Name */}
           <div>
-            <label htmlFor="name" className="block mb-1 text-sm font-medium text-gray-700">
+            <label className="block mb-1 text-sm font-medium text-gray-700">
               Name
             </label>
             <input
-              id="name"
-              name="name"
+              name="username"
               type="text"
               className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-              value={form.name}
+              value={form.username}
               onChange={handleChange}
-              required
               placeholder="Full Name"
             />
           </div>
+
           {/* Email */}
           <div>
-            <label htmlFor="email" className="block mb-1 text-sm font-medium text-gray-700">
+            <label className="block mb-1 text-sm font-medium text-gray-700">
               Email Address
             </label>
             <input
-              id="email"
               name="email"
               type="email"
               className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
               value={form.email}
               onChange={handleChange}
-              required
               placeholder="you@email.com"
             />
           </div>
+
+          {/* Phone Number */}
+          <div>
+            <label className="block mb-1 text-sm font-medium text-gray-700">
+              Phone Number
+            </label>
+            <input
+              name="phoneNumber"
+              type="text"
+              className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+              value={form.phoneNumber}
+              onChange={handleChange}
+              placeholder="1234567890"
+            />
+          </div>
+
           {/* Password */}
           <div>
-            <label htmlFor="password" className="block mb-1 text-sm font-medium text-gray-700">
+            <label className="block mb-1 text-sm font-medium text-gray-700">
               Password
             </label>
             <input
-              id="password"
               name="password"
               type="password"
               className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
               value={form.password}
               onChange={handleChange}
-              required
               placeholder="••••••••"
             />
           </div>
+
           {/* Confirm Password */}
           <div>
-            <label htmlFor="confirmPassword" className="block mb-1 text-sm font-medium text-gray-700">
+            <label className="block mb-1 text-sm font-medium text-gray-700">
               Confirm Password
             </label>
             <input
-              id="confirmPassword"
               name="confirmPassword"
               type="password"
               className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
               value={form.confirmPassword}
               onChange={handleChange}
-              required
               placeholder="••••••••"
             />
           </div>
-          {/* Role Dropdown */}
+
+          {/* Role */}
           <div>
-            <label htmlFor="role" className="block mb-1 text-sm font-medium text-gray-700">
+            <label className="block mb-1 text-sm font-medium text-gray-700">
               Role
             </label>
             <select
-              id="role"
               name="role"
               className="w-full px-3 py-2 border border-gray-300 rounded bg-white focus:outline-none focus:ring-2 focus:ring-blue-400"
               value={form.role}
               onChange={handleChange}
-              required
             >
               <option value="">Select Role</option>
               <option value="Employee">Employee</option>
               <option value="Job Seeker">Job Seeker</option>
             </select>
           </div>
+
           {/* Submit */}
           <button
             type="submit"
@@ -130,9 +175,10 @@ const Signup = () => {
             Sign Up
           </button>
         </form>
+
         <div className="mt-5 text-center">
           Already have an account?{" "}
-          <Link to="/login" className="text-red-600  text-sm">
+          <Link to="/login" className="text-red-600 text-sm">
             Login
           </Link>
         </div>
