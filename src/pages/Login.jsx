@@ -1,6 +1,8 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -9,13 +11,14 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
     if (!email || !password) {
-      if (!email) alert("Email is required");
-      if (!password) alert("Password is required");
+      if (!email) toast.error("Email is required");
+      if (!password) toast.error("Password is required");
       return;
     }
 
@@ -25,15 +28,21 @@ const Login = () => {
         "http://localhost:5252/api/Users/Login",
         { email, password }
       );
-      alert(response.data.message);
+
       localStorage.setItem("user", JSON.stringify(response.data.user));
-      navigate("/dashboard");
+
+      toast.success("Login successful! Redirecting...");
+
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 1500);
     } catch (err) {
-      if (err.response?.data?.message) {
-        setError(err.response.data.message);
-      } else {
-        setError("Something went wrong. Please try again.");
-      }
+      const message =
+        err.response?.data?.message ||
+        "Something went wrong. Please try again.";
+
+      setError(message);
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -100,12 +109,15 @@ const Login = () => {
         </form>
 
         <div className="mt-5 text-center">
-          Don’t have an account?{" "}
+          Don't have an account?{" "}
           <Link to="/signup" className="text-red-600">
             Register
           </Link>
         </div>
       </div>
+
+      {/* Toast notification container */}
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
     </div>
   );
 };
