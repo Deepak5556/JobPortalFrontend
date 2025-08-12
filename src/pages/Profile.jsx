@@ -18,12 +18,10 @@ const defaultApps = [
     appliedDate: "2025-08-04",
   },
 ];
-
 const Profile = () => {
   const profilePhotoRef = useRef();
   const resumeRef = useRef();
-  const navigate = useNavigate(); // NEW
-
+  const navigate = useNavigate(); 
   const [editName, setEditName] = useState(false);
   const [editPhone, setEditPhone] = useState(false);
   const [editLocation, setEditLocation] = useState(false);
