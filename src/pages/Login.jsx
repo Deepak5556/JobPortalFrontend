@@ -10,10 +10,9 @@ const Login = () => {
 
   const navigate = useNavigate();
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Stop the form from refreshing the page
-    setError(""); // Clear any previous errors
+    e.preventDefault();
+    setError("");
 
-    // Basic validation
     if (!email || !password) {
       if (!email) alert("Email is required");
       if (!password) alert("Password is required");
@@ -22,14 +21,11 @@ const Login = () => {
 
     try {
       setLoading(true);
-      const response = await axios.get(
+      const response = await axios.post(
         "http://localhost:5252/api/Users/Login",
-        {
-          params: { email, password },
-        }
+        { email, password }
       );
       alert(response.data.message);
-      console.log("User Data:", response.data.user);
       localStorage.setItem("user", JSON.stringify(response.data.user));
       navigate("/dashboard");
     } catch (err) {
