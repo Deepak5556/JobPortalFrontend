@@ -34,6 +34,7 @@ const Profile = () => {
   const [phone, setPhone] = useState("+91 9876543210");
   const [location, setLocation] = useState("Bangalore, India");
   const [experience, setExperience] = useState(3);
+  const [role, setRole] = useState("Software Engineer");
   const [resumeUrl, setResumeUrl] = useState("https://resume-link.com");
   const [skills, setSkills] = useState("C#, ASP.NET, SQL, TailwindCSS");
   const [applications, setApplications] = useState(defaultApps);
@@ -44,12 +45,12 @@ const Profile = () => {
     if (data) {
       try {
         const jsonData = JSON.parse(data);
-        console.log("Logged in user:", jsonData.username );
+        console.log("Logged in user:", jsonData.username);
         if (jsonData.username) setName(jsonData.username);
         if (jsonData.phoneNumber) setPhone(jsonData.phoneNumber);
         if (jsonData.location) setLocation(jsonData.location);
+        if (jsonData.role) setRole(jsonData.role);
         console.log(jsonData.phone);
-        
       } catch (err) {
         console.error("Error parsing user data from localStorage:", err);
       }
@@ -85,25 +86,6 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 flex flex-col">
-      {/* Top Bar */}
-      <header className="w-full bg-white/70 backdrop-blur border-b border-blue-100">
-        <div className="container max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-          <Link to="/" className="text-xl font-extrabold text-blue-900">
-            Job Portal
-          </Link>
-          <div className="flex items-center gap-3">
-            <button
-              type="button"
-              onClick={handleLogout}
-              className="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-semibold shadow focus:outline-none focus:ring-2 focus:ring-red-400"
-              aria-label="Logout"
-            >
-              Logout
-            </button>
-          </div>
-        </div>
-      </header>
-
       <main className="flex-grow container max-w-7xl mx-auto px-4 py-10 grid grid-cols-1 md:grid-cols-4 gap-8">
         {/* Sidebar */}
         <aside className="hidden md:block col-span-1 bg-white rounded-2xl shadow p-6 h-fit">
@@ -176,7 +158,7 @@ const Profile = () => {
                   </button>
                 </div>
               )}
-              <p className="text-sm text-blue-700">Job Seeker</p>
+              <p className="text-sm text-blue-700">{role}</p>
             </div>
 
             {/* Shortcuts */}
@@ -200,10 +182,11 @@ const Profile = () => {
                 Saved Jobs
               </a>
               <a
-                href="#"
-                className="hover:bg-blue-50 px-4 py-2 rounded font-semibold text-blue-700"
+                type="button"
+                onClick={handleLogout}
+                className="hover:bg-blue-50 px-4 py-2 hover:cursor-pointer rounded font-semibold text-blue-700"
               >
-                Settings
+                Logout
               </a>
             </div>
           </div>
