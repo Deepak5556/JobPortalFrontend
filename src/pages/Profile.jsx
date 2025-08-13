@@ -29,7 +29,9 @@ const Profile = () => {
   const [editExperience, setEditExperience] = useState(false);
   const [editSkills, setEditSkills] = useState(false);
 
-  const [photo, setPhoto] = useState("https://deepakportfolioo.web.app/assets/deepak-DN2WtHp-.png");
+  const [photo, setPhoto] = useState(
+    "https://deepakportfolioo.web.app/assets/deepak-DN2WtHp-.png"
+  );
   const [name, setName] = useState("John Doe");
   const [phone, setPhone] = useState("+91 9876543210");
   const [location, setLocation] = useState("Bangalore, India");
@@ -45,12 +47,10 @@ const Profile = () => {
     if (data) {
       try {
         const jsonData = JSON.parse(data);
-        console.log("Logged in user:", jsonData.username);
         if (jsonData.username) setName(jsonData.username);
         if (jsonData.phoneNumber) setPhone(jsonData.phoneNumber);
         if (jsonData.location) setLocation(jsonData.location);
         if (jsonData.role) setRole(jsonData.role);
-        console.log(jsonData.phone);
       } catch (err) {
         console.error("Error parsing user data from localStorage:", err);
       }

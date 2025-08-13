@@ -1,8 +1,6 @@
 import React from "react";
-import NavBar from "../components/NavBar";
 import Footer from "../components/Footer";
 
-// Mock jobs data
 const mockJobs = [
   {
     id: 1,
@@ -30,28 +28,29 @@ const mockJobs = [
   },
 ];
 
+const data = localStorage.getItem("user");
+const user = data ? JSON.parse(data) : null;
+
 const Dashboard = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 flex flex-col">
       {/* Fixed NavBar at the top */}
-
       {/* Main grid layout */}
       <main className="flex-grow container max-w-7xl mx-auto px-4 py-10 grid grid-cols-1 md:grid-cols-4 gap-8">
         {/* Sidebar (profile/shortcuts) */}
         <aside className="hidden md:block col-span-1 bg-white rounded-2xl shadow p-6 h-fit">
           <div className="flex flex-col items-center">
             <img
-              src="https://randomuser.me/api/portraits/men/75.jpg"
+              src="https://deepakportfolioo.web.app/assets/deepak-DN2WtHp-.png"
               alt="Profile"
               className="w-24 h-24 rounded-full shadow mb-4 border-4 border-white"
             />
             <div className="text-center">
               <h2 className="text-xl font-bold text-gray-800 mb-1">
-                Deepakkumar
+                {user?.username}
               </h2>
-
               <p className="text-sm text-blue-700 mb-4">
-                Frontend Developer | Job Seeker
+                {user?.role}
               </p>
             </div>
             <div className="flex flex-col gap-2 w-full">
@@ -88,7 +87,7 @@ const Dashboard = () => {
           {/* Welcome banner */}
           <div className="bg-gradient-to-r from-blue-600 to-blue-400 text-white rounded-xl shadow-lg p-7 flex items-center relative overflow-hidden mb-3">
             <div>
-              <h2 className="text-3xl font-bold mb-1">Welcome, Deepak!</h2>
+              <h2 className="text-3xl font-bold mb-1">Welcome, {user?.username} !</h2>
               <p className="text-lg opacity-90">
                 Your dashboard is live — Apply to new jobs, track applications,
                 and grow your network.
