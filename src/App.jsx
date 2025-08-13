@@ -9,6 +9,7 @@ import MyApplications from "./pages/MyApplications";
 import Profile from "./pages/Profile";
 import SavedJobs from "./pages/Saved";
 import { ApplicationsProvider } from "../src/contexts/ApplicationsContext";
+import JobSeekerProfileForm from "./pages/JobSeekerProfileForm";
 
 const NotFound = () => (
   <div className="flex items-center justify-center h-screen">
@@ -19,14 +20,14 @@ const NotFound = () => (
 const AppRoutes = () => {
   const location = useLocation();
   // Only show Navbar if not login or signup
-  const hideNavbarPaths = ["/login", "/signup"];
+  const hideNavbarPaths = ["/login", "/signup","/JobSeekerProfileForm"];
   const shouldShowNavbar = !hideNavbarPaths.includes(location.pathname);
 
   return (
     <>
       {shouldShowNavbar && <Navbar />}
       <Routes>
-        <Route path="/" element={<Navigate to="/dashboard" />} />
+        <Route path="/" element={<Navigate to="/login" />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/dashboard" element={<Dashboard />} />
@@ -34,6 +35,7 @@ const AppRoutes = () => {
         <Route path="/applications" element={<MyApplications />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/saved" element={<SavedJobs />} />
+        <Route path="/JobSeekerProfileForm" element={<JobSeekerProfileForm />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </>
