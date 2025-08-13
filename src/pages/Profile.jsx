@@ -34,6 +34,7 @@ const Profile = () => {
   const [phone, setPhone] = useState("+91 9876543210");
   const [location, setLocation] = useState("Bangalore, India");
   const [experience, setExperience] = useState(3);
+  const [role, setRole] = useState("Software Engineer");
   const [resumeUrl, setResumeUrl] = useState("https://resume-link.com");
   const [skills, setSkills] = useState("C#, ASP.NET, SQL, TailwindCSS");
   const [applications, setApplications] = useState(defaultApps);
@@ -44,12 +45,12 @@ const Profile = () => {
     if (data) {
       try {
         const jsonData = JSON.parse(data);
-        console.log("Logged in user:", jsonData.username );
+        console.log("Logged in user:", jsonData.username);
         if (jsonData.username) setName(jsonData.username);
         if (jsonData.phoneNumber) setPhone(jsonData.phoneNumber);
         if (jsonData.location) setLocation(jsonData.location);
+        if (jsonData.role) setRole(jsonData.role);
         console.log(jsonData.phone);
-        
       } catch (err) {
         console.error("Error parsing user data from localStorage:", err);
       }
@@ -176,7 +177,7 @@ const Profile = () => {
                   </button>
                 </div>
               )}
-              <p className="text-sm text-blue-700">Job Seeker</p>
+              <p className="text-sm text-blue-700">{role}</p>
             </div>
 
             {/* Shortcuts */}
@@ -238,12 +239,12 @@ const Profile = () => {
                       onChange={(e) => setPhone(e.target.value)}
                       autoFocus
                     />
-                    <button
+                    <setting
                       onClick={() => setEditPhone(false)}
                       className="ml-2 px-2 py-1 text-sm text-white bg-blue-600 rounded hover:bg-blue-700"
                     >
                       Save
-                    </button>
+                    </setting>
                   </>
                 )}
               </div>
