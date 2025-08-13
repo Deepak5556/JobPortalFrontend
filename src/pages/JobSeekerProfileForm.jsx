@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import statesAndDistricts from "../api/StatesAndDistricts.js";
+import statesAndDistricts from "../Data/StatesAndDistricts.js";
 
 const JobSeekerProfileForm = () => {
   const [state, setState] = useState("");
@@ -42,7 +42,14 @@ const JobSeekerProfileForm = () => {
     e.preventDefault();
     setError("");
 
-    if (!state || !district || !experienceYears || !resumeFile || !skills || !profilePhoto) {
+    if (
+      !state ||
+      !district ||
+      !experienceYears ||
+      !resumeFile ||
+      !skills ||
+      !profilePhoto
+    ) {
       alert("All fields are required.");
       return;
     }
@@ -223,7 +230,7 @@ const JobSeekerProfileForm = () => {
                 <button
                   type="button"
                   onClick={handleRemoveResume}
-                  className="text-red-500 text-xs"
+                  className="text-red-500 hover:cursor-pointer font-bold text-xs"
                 >
                   Remove
                 </button>

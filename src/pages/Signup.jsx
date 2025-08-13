@@ -47,7 +47,6 @@ const Signup = () => {
       phoneNumber: form.phoneNumber,
       role: form.role,
     };
-    
 
     try {
       const response = await axios.post(
@@ -55,7 +54,11 @@ const Signup = () => {
         payload
       );
       alert(response.data.message || "Signup successful!");
-      navigate("/dashboard");
+      if (payload.role === "Job Seeker") {
+        navigate("/JobSeekerProfileForm");
+      } else {
+        navigate("/dashboard");
+      }
     } catch (err) {
       if (err.response) {
         setError(

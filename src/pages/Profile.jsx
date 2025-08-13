@@ -29,7 +29,7 @@ const Profile = () => {
   const [editExperience, setEditExperience] = useState(false);
   const [editSkills, setEditSkills] = useState(false);
 
-  const [photo, setPhoto] = useState("/path/to/profile-photo.jpg");
+  const [photo, setPhoto] = useState("https://deepakportfolioo.web.app/assets/deepak-DN2WtHp-.png");
   const [name, setName] = useState("John Doe");
   const [phone, setPhone] = useState("+91 9876543210");
   const [location, setLocation] = useState("Bangalore, India");
