@@ -1,7 +1,6 @@
-import React, { useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom"; // NEW: useNavigate
+import React, { useRef, useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
-// Mock applications data
 const defaultApps = [
   {
     id: 1,
@@ -18,10 +17,12 @@ const defaultApps = [
     appliedDate: "2025-08-04",
   },
 ];
+
 const Profile = () => {
   const profilePhotoRef = useRef();
   const resumeRef = useRef();
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
+
   const [editName, setEditName] = useState(false);
   const [editPhone, setEditPhone] = useState(false);
   const [editLocation, setEditLocation] = useState(false);
@@ -37,10 +38,29 @@ const Profile = () => {
   const [skills, setSkills] = useState("C#, ASP.NET, SQL, TailwindCSS");
   const [applications, setApplications] = useState(defaultApps);
 
+  // Load user from localStorage
+  useEffect(() => {
+    const data = localStorage.getItem("user");
+    if (data) {
+      try {
+        const jsonData = JSON.parse(data);
+        console.log("Logged in user:", jsonData.username );
+        if (jsonData.username) setName(jsonData.username);
+        if (jsonData.phoneNumber) setPhone(jsonData.phoneNumber);
+        if (jsonData.location) setLocation(jsonData.location);
+        console.log(jsonData.phone);
+        
+      } catch (err) {
+        console.error("Error parsing user data from localStorage:", err);
+      }
+    } else {
+      console.log("No user data found in localStorage");
+    }
+  }, []);
+
   const handlePhotoChange = (e) => {
     if (e.target.files[0]) {
-      // FIX: Use files instead of files
-      setPhoto(URL.createObjectURL(e.target.files));
+      setPhoto(URL.createObjectURL(e.target.files[0]));
     }
   };
 
@@ -49,30 +69,23 @@ const Profile = () => {
     .map((s) => s.trim())
     .filter(Boolean);
 
-  // NEW: Logout handler
   const handleLogout = () => {
     const ok = window.confirm("Are you sure you want to log out?");
     if (!ok) return;
 
     try {
-      // Clear any auth tokens or user state here
-      // localStorage.removeItem("token");
       localStorage.removeItem("user");
       sessionStorage.clear();
-      // Optionally call your API to invalidate the session
-
-      // Navigate to login page or landing page
-      navigate("/login"); // Adjust path to your routes
+      navigate("/login");
     } catch (err) {
       console.error("Logout failed:", err);
-      // As a fallback, force reload or redirect
       window.location.href = "/login";
     }
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 flex flex-col">
-      {/* NEW: Top bar with Logout */}
+      {/* Top Bar */}
       <header className="w-full bg-white/70 backdrop-blur border-b border-blue-100">
         <div className="container max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
           <Link to="/" className="text-xl font-extrabold text-blue-900">
@@ -92,7 +105,7 @@ const Profile = () => {
       </header>
 
       <main className="flex-grow container max-w-7xl mx-auto px-4 py-10 grid grid-cols-1 md:grid-cols-4 gap-8">
-        {/* Sidebar (profile / shortcuts) */}
+        {/* Sidebar */}
         <aside className="hidden md:block col-span-1 bg-white rounded-2xl shadow p-6 h-fit">
           <div className="flex flex-col items-center">
             <div className="relative group mb-3">
@@ -144,19 +157,7 @@ const Profile = () => {
                     className="text-blue-600 hover:text-blue-800 p-1 ml-1"
                     aria-label="Edit Name"
                   >
-                    <svg
-                      className="w-4 h-4 inline"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth={2}
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M15.232 5.232l3.536 3.536M9 17H6v-3.586a1 1 0 01.293-.707l7.414-7.414a2 2 0 012.828 0l3.586 3.586a2 2 0 010 2.828l-7.414 7.414A1 1 0 019 17z"
-                      />
-                    </svg>
+                    ✏️
                   </button>
                 </>
               ) : (
@@ -208,9 +209,9 @@ const Profile = () => {
           </div>
         </aside>
 
-        {/* Main Profile Content */}
+        {/* Main Content */}
         <section className="col-span-1 md:col-span-3 flex flex-col gap-8">
-          {/* Profile Info Card */}
+          {/* Profile Details */}
           <div className="bg-white rounded-2xl shadow-xl p-8 mb-8 border border-gray-100">
             <h2 className="text-2xl font-bold text-blue-900 mb-4">
               Profile Details
@@ -225,21 +226,8 @@ const Profile = () => {
                     <button
                       onClick={() => setEditPhone(true)}
                       className="text-blue-600 hover:text-blue-800 p-1 ml-1"
-                      aria-label="Edit Phone"
                     >
-                      <svg
-                        className="w-4 h-4 inline"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth={2}
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M15.232 5.232l3.536 3.536M9 17H6v-3.586a1 1 0 01.293-.707l7.414-7.414a2 2 0 012.828 0l3.586 3.586a2 2 0 010 2.828l-7.414 7.414A1 1 0 019 17z"
-                        />
-                      </svg>
+                      ✏️
                     </button>
                   </>
                 ) : (
@@ -259,6 +247,7 @@ const Profile = () => {
                   </>
                 )}
               </div>
+
               {/* Location */}
               <div>
                 <span className="font-semibold text-gray-600">Location:</span>
@@ -268,21 +257,8 @@ const Profile = () => {
                     <button
                       onClick={() => setEditLocation(true)}
                       className="text-blue-600 hover:text-blue-800 p-1 ml-1"
-                      aria-label="Edit Location"
                     >
-                      <svg
-                        className="w-4 h-4 inline"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth={2}
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M15.232 5.232l3.536 3.536M9 17H6v-3.586a1 1 0 01.293-.707l7.414-7.414a2 2 0 012.828 0l3.586 3.586a2 2 0 010 2.828l-7.414 7.414A1 1 0 019 17z"
-                        />
-                      </svg>
+                      ✏️
                     </button>
                   </>
                 ) : (
@@ -302,6 +278,7 @@ const Profile = () => {
                   </>
                 )}
               </div>
+
               {/* Experience */}
               <div>
                 <span className="font-semibold text-gray-600">
@@ -313,21 +290,8 @@ const Profile = () => {
                     <button
                       onClick={() => setEditExperience(true)}
                       className="text-blue-600 hover:text-blue-800 p-1 ml-1"
-                      aria-label="Edit Experience"
                     >
-                      <svg
-                        className="w-4 h-4 inline"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth={2}
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M15.232 5.232l3.536 3.536M9 17H6v-3.586a1 1 0 01.293-.707l7.414-7.414a2 2 0 012.828 0l3.586 3.586a2 2 0 010 2.828l-7.414 7.414A1 1 0 019 17z"
-                        />
-                      </svg>
+                      ✏️
                     </button>
                   </>
                 ) : (
@@ -349,7 +313,8 @@ const Profile = () => {
                   </>
                 )}
               </div>
-              {/* Resume Upload/View */}
+
+              {/* Resume */}
               <div>
                 <span className="font-semibold text-gray-600">Resume:</span>
                 <a
@@ -374,6 +339,7 @@ const Profile = () => {
                   aria-label="Upload resume"
                 />
               </div>
+
               {/* Skills */}
               <div className="col-span-1 md:col-span-2">
                 <span className="font-semibold text-gray-600">Skills:</span>
@@ -392,21 +358,8 @@ const Profile = () => {
                     <button
                       onClick={() => setEditSkills(true)}
                       className="text-blue-600 hover:text-blue-800 p-1 ml-2"
-                      aria-label="Edit Skills"
                     >
-                      <svg
-                        className="w-4 h-4 inline"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth={2}
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M15.232 5.232l3.536 3.536M9 17H6v-3.586a1 1 0 01.293-.707l7.414-7.414a2 2 0 012.828 0l3.586 3.586a2 2 0 010 2.828l-7.414 7.414A1 1 0 019 17z"
-                        />
-                      </svg>
+                      ✏️
                     </button>
                   </>
                 ) : (
