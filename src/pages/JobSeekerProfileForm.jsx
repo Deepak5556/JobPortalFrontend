@@ -2,9 +2,8 @@ import axios from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import statesAndDistricts from "../Data/StatesAndDistricts.js";
-
 const JobSeekerProfileForm = () => {
-  const [state, setState] = useState("");
+  const [selectedState, setSelectedState] = useState("");
   const [district, setDistrict] = useState("");
   const [experienceYears, setExperienceYears] = useState("");
   const [resumeFile, setResumeFile] = useState(null);
@@ -13,9 +12,12 @@ const JobSeekerProfileForm = () => {
   const [skills, setSkills] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-
   const navigate = useNavigate();
-
+  // ===== Cloudinary Config =====
+  const CLOUD_NAME = "dl2wibcfp"; // Your Cloudinary cloud name
+  const PROFILE_PRESET = "JobPortal"; // unsigned upload preset for images
+  const RESUME_PRESET = "Resume"; // unsigned upload preset for raw files
+  // ===== File Handlers =====
   const handlePhotoChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -23,27 +25,34 @@ const JobSeekerProfileForm = () => {
       setPhotoPreview(URL.createObjectURL(file));
     }
   };
-
   const handleRemovePhoto = () => {
     setProfilePhoto(null);
     setPhotoPreview(null);
   };
-
   const handleResumeChange = (e) => {
     const file = e.target.files[0];
     if (file) setResumeFile(file);
   };
-
   const handleRemoveResume = () => {
     setResumeFile(null);
   };
+  const uploadToCloudinary = async (file, preset, resourceType, folder) => {
+    const data = new FormData();
+    data.append("file", file);
+    data.append("upload_preset", preset);
+    data.append("folder", folder);
 
+    const uploadUrl = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/${resourceType}/upload`;
+    const res = await axios.post(uploadUrl, data);
+    return res.data.secure_url;
+  };
+  // ===== Form Submit =====
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
     if (
-      !state ||
+      !selectedState ||
       !district ||
       !experienceYears ||
       !resumeFile ||
@@ -57,43 +66,39 @@ const JobSeekerProfileForm = () => {
     try {
       setLoading(true);
 
-      // Upload profile photo
-      const photoData = new FormData();
-      photoData.append("file", profilePhoto);
-      const photoRes = await axios.post(
-        "http://localhost:5252/api/UploadProfilePhoto",
-        photoData,
-        { headers: { "Content-Type": "multipart/form-data" } }
+      // Upload Profile Photo
+      const profilePhotoUrl = await uploadToCloudinary(
+        profilePhoto,
+        PROFILE_PRESET,
+        "image",
+        "jobportal/profile_photos"
       );
-      const profilePhotoUrl = photoRes.data.url;
-
-      // Upload resume PDF
-      const resumeData = new FormData();
-      resumeData.append("file", resumeFile);
-      const resumeRes = await axios.post(
-        "http://localhost:5252/api/UploadResume",
-        resumeData,
-        { headers: { "Content-Type": "multipart/form-data" } }
+      // Upload Resume
+      const resumeUrl = await uploadToCloudinary(
+        resumeFile,
+        RESUME_PRESET,
+        "raw", // 'raw' is correct for PDFs
+        "jobportal/resumes"
       );
-      const resumeUrl = resumeRes.data.url;
-
+      // Get User Info from localStorage
       const user = JSON.parse(localStorage.getItem("user"));
-
+      // Adjust according to your stored structure (_id, id, or userId)
+      const userId = user?._id || user?.id || user?.userId || 0;
       const payload = {
-        userId: user?.id || 0,
-        location: `${district}, ${state}`,
+        userId,
+        profilePhotoUrl,
+        location: `${district}, ${selectedState}`,
         experienceYears: Number(experienceYears),
         resumeUrl,
-        profilePhotoUrl,
         skills,
+        applications: [],
         savedJobIds: [],
       };
-
       await axios.post("http://localhost:5252/api/JobSeekerProfiles", payload);
-
       alert("Profile created successfully!");
       navigate("/dashboard");
     } catch (err) {
+      console.error(err);
       setError(
         err.response?.data?.message || "Something went wrong. Please try again."
       );
@@ -101,10 +106,9 @@ const JobSeekerProfileForm = () => {
       setLoading(false);
     }
   };
-
+  // ===== Styles =====
   const inputClasses =
     "w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700";
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="bg-white px-8 py-10 rounded-2xl shadow-lg max-w-lg w-full">
@@ -162,9 +166,9 @@ const JobSeekerProfileForm = () => {
               State
             </label>
             <select
-              value={state}
+              value={selectedState}
               onChange={(e) => {
-                setState(e.target.value);
+                setSelectedState(e.target.value);
                 setDistrict("");
               }}
               className={inputClasses}
@@ -189,12 +193,12 @@ const JobSeekerProfileForm = () => {
               value={district}
               onChange={(e) => setDistrict(e.target.value)}
               className={inputClasses}
-              disabled={!state || loading}
+              disabled={!selectedState || loading}
               required
             >
               <option value="">Select District</option>
-              {state &&
-                statesAndDistricts[state]?.map((districtName) => (
+              {selectedState &&
+                statesAndDistricts[selectedState]?.map((districtName) => (
                   <option key={districtName} value={districtName}>
                     {districtName}
                   </option>
@@ -211,7 +215,7 @@ const JobSeekerProfileForm = () => {
               type="number"
               value={experienceYears}
               onChange={(e) => setExperienceYears(e.target.value)}
-              placeholder="e.g., 3"
+              placeholder="e.g., 0-9"
               className={inputClasses}
               disabled={loading}
               min="0"
@@ -278,5 +282,4 @@ const JobSeekerProfileForm = () => {
     </div>
   );
 };
-
 export default JobSeekerProfileForm;

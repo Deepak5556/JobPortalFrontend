@@ -26,7 +26,14 @@ const Login = () => {
         { email, password }
       );
       localStorage.setItem("user", JSON.stringify(response.data.user));
-      navigate("/dashboard");
+      const res = localStorage.getItem("user");
+      
+      const user = res ? JSON.parse(res) : null;
+      if (user && user.role == "Job Seeker") {
+        navigate("/dashboard");
+      } else {
+        navigate("/EmployerDashboard");
+      }
     } catch (err) {
       if (err.response?.data?.message) {
         setError(err.response.data.message);

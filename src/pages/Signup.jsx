@@ -57,7 +57,7 @@ const Signup = () => {
       if (payload.role === "Job Seeker") {
         navigate("/JobSeekerProfileForm");
       } else {
-        navigate("/dashboard");
+        navigate("/EmployerDashboard");
       }
     } catch (err) {
       if (err.response) {
