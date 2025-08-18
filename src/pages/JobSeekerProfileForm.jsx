@@ -73,39 +73,53 @@ const JobSeekerProfileForm = () => {
         "image",
         "jobportal/profile_photos"
       );
+
       // Upload Resume
       const resumeUrl = await uploadToCloudinary(
         resumeFile,
         RESUME_PRESET,
-        "raw", // 'raw' is correct for PDFs
+        "raw", // PDFs = raw
         "jobportal/resumes"
       );
+
       // Get User Info from localStorage
       const user = JSON.parse(localStorage.getItem("user"));
-      // Adjust according to your stored structure (_id, id, or userId)
       const userId = user?._id || user?.id || user?.userId || 0;
+
+      // ✅ Build payload exactly like your JobSeekerProfile model
       const payload = {
-        userId,
-        profilePhotoUrl,
-        location: `${district}, ${selectedState}`,
-        experienceYears: Number(experienceYears),
-        resumeUrl,
-        skills,
-        applications: [],
-        savedJobIds: [],
+        JobSeekerProfileId: 0, // let backend generate
+        UserId: userId,
+        ProfileURL: profilePhotoUrl,
+        Location: `${district}, ${selectedState}`,
+        ExperienceYears: Number(experienceYears),
+        ResumeUrl: resumeUrl,
+        Phone: user?.phoneNumber || "",
+        Skills: skills,
+        SavedJobIds: "[]", // store as string, backend expects string
+        Applications: [], // empty collection
       };
-      await axios.post("http://localhost:5252/api/JobSeekerProfiles", payload);
+
+      console.log("Sending Payload:", payload);
+
+      await axios.post("http://localhost:5252/api/JobSeekerProfiles", payload, {
+        headers: { "Content-Type": "application/json" },
+      });
+
       alert("Profile created successfully!");
       navigate("/dashboard");
     } catch (err) {
-      console.error(err);
+      console.error("Error creating profile:", err.response?.data || err);
       setError(
-        err.response?.data?.message || "Something went wrong. Please try again."
+        err.response?.data?.title ||
+          err.response?.data?.message ||
+          "Something went wrong. Please try again."
       );
     } finally {
       setLoading(false);
     }
   };
+
   // ===== Styles =====
   const inputClasses =
     "w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700";
