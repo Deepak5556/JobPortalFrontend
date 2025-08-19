@@ -1,4 +1,3 @@
-import React from "react";
 import Footer from "../components/Footer";
 
 const mockJobs = [
@@ -49,9 +48,7 @@ const Dashboard = () => {
               <h2 className="text-xl font-bold text-gray-800 mb-1">
                 {user?.username}
               </h2>
-              <p className="text-sm text-blue-700 mb-4">
-                {user?.role}
-              </p>
+              <p className="text-sm text-blue-700 mb-4">{user?.role}</p>
             </div>
             <div className="flex flex-col gap-2 w-full">
               <a
@@ -87,7 +84,9 @@ const Dashboard = () => {
           {/* Welcome banner */}
           <div className="bg-gradient-to-r from-blue-600 to-blue-400 text-white rounded-xl shadow-lg p-7 flex items-center relative overflow-hidden mb-3">
             <div>
-              <h2 className="text-3xl font-bold mb-1">Welcome, {user?.username} !</h2>
+              <h2 className="text-3xl font-bold mb-1">
+                Welcome, {user?.username} !
+              </h2>
               <p className="text-lg opacity-90">
                 Your dashboard is live — Apply to new jobs, track applications,
                 and grow your network.

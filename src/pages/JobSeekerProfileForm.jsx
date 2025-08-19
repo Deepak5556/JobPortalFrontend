@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useState } from "react";
+import { use, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import statesAndDistricts from "../Data/StatesAndDistricts.js";
 const JobSeekerProfileForm = () => {
@@ -81,12 +81,10 @@ const JobSeekerProfileForm = () => {
         "raw", // PDFs = raw
         "jobportal/resumes"
       );
+      console.log("Uploaded");
 
-      // Get User Info from localStorage
       const user = JSON.parse(localStorage.getItem("user"));
       const userId = user?._id || user?.id || user?.userId || 0;
-
-      // ✅ Build payload exactly like your JobSeekerProfile model
       const payload = {
         JobSeekerProfileId: 0, // let backend generate
         UserId: userId,
@@ -96,8 +94,8 @@ const JobSeekerProfileForm = () => {
         ResumeUrl: resumeUrl,
         Phone: user?.phoneNumber || "",
         Skills: skills,
-        SavedJobIds: "[]", // store as string, backend expects string
-        Applications: [], // empty collection
+        SavedJobIds: "[]",
+        Applications: [],
       };
 
       console.log("Sending Payload:", payload);
@@ -109,7 +107,7 @@ const JobSeekerProfileForm = () => {
       alert("Profile created successfully!");
       navigate("/dashboard");
     } catch (err) {
-      console.error("Error creating profile:", err.response?.data || err);
+      // console.error("Error creating profile:", err.response?.data || err);
       setError(
         err.response?.data?.title ||
           err.response?.data?.message ||
